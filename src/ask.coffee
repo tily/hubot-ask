@@ -7,23 +7,20 @@
 module.exports = (robot) ->
   callbacks = {}
 
-  currentCallback = (user, room, callback)->
+  currentCallback = (user, callback)->
     callbacks[user.id] ||= {}
     if callback
-      callbacks[user.id][room.id] = callback
+      callbacks[user.id][user.room] = callback
     else
-      callback = callbacks[user.id][room.id]
-      callbacks[user.id][room.id] = null
+      callback = callbacks[user.id][user.room]
+      callbacks[user.id][user.room] = null
       callback
 
-  robot.ask = (question, callback, message)->
-    if message
-      message.reply(question)
-    else
-      robot.send question
-    currentCallback(user, room, callback)
+  robot.ask = (user, question, callback)->
+    robot.reply user: user, question
+    currentCallback(user, callback)
 
   robot.respond /(.+)/, (message)->
-    if callback = currentCallback(message.message.user.id, message.message.room.id)
+    if callback = currentCallback(message.message.user)
       callback(message)
       message.done = true
