@@ -16,9 +16,9 @@ module.exports = (robot) ->
       callbacks[user.id][user.room] = null
       callback
 
-  robot.ask = (user, question, callback)->
-    robot.reply user: user, question
-    currentCallback(user, callback)
+  robot.ask = (envelope, question, callback)->
+    robot.reply envelope, question
+    currentCallback(envelope.user, callback)
 
   robot.respond /(.+)/, (message)->
     if callback = currentCallback(message.message.user)
